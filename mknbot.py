@@ -1,5 +1,5 @@
 import io
-
+from deep_translator import GoogleTranslator
 import fitz
 from PIL import Image
 from io import BytesIO
@@ -26,4 +26,8 @@ for indx in range(len(file)):
 
         image.show()'''
     text[indx] = textonpage
+TranslatedText = GoogleTranslator(source='auto', target='ru').translate(text[1]) # Переводим текст
 
+print(text[1])
+print('==========\n'*2)
+print(TranslatedText)
