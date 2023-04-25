@@ -11,7 +11,8 @@ def foo(x):
         return None
 
 def normalization(s):
-    symbols = list(range(97, 123)) + list(range(65, 91)) + [ord(str(i)) for i in range(10)] + [ord(' ')]
+    alphabet = ["а","б","в","г","д","е","ё","ж","з","и","й","к","л","м","н","о","п","р","с","т","у","ф","х","ц","ч","ш","щ","ъ","ы","ь","э","ю","я"]
+    symbols = list(range(97, 123)) + list(range(65, 91)) + [ord(str(i)) for i in range(10)] + [ord(' ')] + [ord(el) for el in alphabet] + [ord(el.upper()) for el in alphabet]
     p = ''
     for el in s:
         c = ord(el)
@@ -57,16 +58,41 @@ def LevensteinDistance(s1, s2):
 
     return DynamicProg[len(s1)][len(s2)]
 
+def TextCompare(text1, text2):
+    ans = []
+    s1, s2 = text1.split(), text2.split()
+    kolvo = 0
+    len1, len2 = len(s1), len(s2)
 
+    for w1 in s1:
+        for w2 in s2:
+            l1, l2 = len(w1), len(w2)
+            h = c = 0
+            while h < l1 - 1 and h < l2 - 1:
+                c += (w1[h] + w1[h + 1] == w2[h] + w2[h + 1])
+                h += 1
+            if (c / (l1 + l2 - c)) > 0.45:
+                kolvo += 1
+    res = (kolvo / (len1 + len2 - kolvo))
+    if res > 0.25:
+        ans.append(1)
+    else:
+        ans.append(res)
+    return ans
 
 
 def finder(InputText):
     distances = {}
+    NormilzedInput = normalization(InputText)
     for ind in range(len(text)):
         TranslatedVersion = GoogleTranslator(source='auto', target='ru').translate(text[ind])
-        TextToStr = ''.join(text[ind].split('\n'))
+        TextToStr = ''.join(TranslatedVersion.split('\n'))
         NormalizedVersion = normalization(TextToStr)
-        distances[ind] = LevensteinDistance(NormalizedVersion, InputText)
+        #print(TextToStr)
+        print(NormalizedVersion)
+        #print(InputText)
+        print('======\n'*3)
+        distances[ind] = (LevensteinDistance(NormalizedVersion, NormilzedInput), TextCompare(NormalizedVersion, NormilzedInput))
     print(distances)
     return min(distances, key = lambda x: distances[x])
 
